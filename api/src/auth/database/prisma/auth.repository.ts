@@ -54,14 +54,44 @@ export class AuthRepository implements AuthRepositoryDTO {
   }
 
   async forget(email: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    const user = await this.db.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Email inválido');
+    }
   }
 
   async reset(password: string, token: string): Promise<Token> {
-    throw new Error('Method not implemented.');
+    // se token for valido, então trocar a senha
+    const id = 0;
+
+    const user = await this.db.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password,
+      },
+    });
+
+    const tokenUser = await this.createToken(user);
+
+    return {
+      accessToken: tokenUser,
+    };
   }
 
   async register(user: UserDTO): Promise<Token> {
-    throw new Error('Method not implemented.');
+    const userRegister = await this.userService.create(user);
+
+    const token = await this.createToken(userRegister);
+
+    return {
+      accessToken: token,
+    };
   }
 }

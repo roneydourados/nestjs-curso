@@ -11,15 +11,15 @@ export class AuthService {
     return this.authRepository.login(email, password);
   }
 
-  // async forget(email: string): Promise<void> {
-  //   throw new Error('Method not implemented.');
-  // }
+  async forget(email: string): Promise<void> {
+    this.authRepository.forget(email);
+  }
 
-  // async reset(password: string, token: string): Promise<Token> {
-  //   return await this.authRepository.reset(password, token);
-  // }
+  async reset(password: string, token: string): Promise<Token> {
+    return await this.authRepository.reset(password, token);
+  }
 
-  // async register(user: UserDTO): Promise<Token> {
-  //   return await this.authRepository.register(user);
-  // }
+  async register(user: UserDTO): Promise<Token> {
+    return await this.authRepository.register(user);
+  }
 }
