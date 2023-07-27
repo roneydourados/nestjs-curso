@@ -1,28 +1,24 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
 import { UserCreateDTO } from './dtos/user.create.dto';
 import { UserUpdateDTO } from './dtos/user.update.dto';
 import { UserService } from './user.service';
+import { ParamId } from 'src/decorators/param-id.decorator';
 
+// aqui vai interceptar todo o controller
+// @UseInterceptors(LogInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // aqui intercepta apenas uma rota
+  //@UseInterceptors(LogInterceptor)
   @Get()
   async index() {
     return await this.userService.list();
   }
 
   @Get(':id')
-  async show(@Param('id', ParseIntPipe) id: number) {
+  async show(@ParamId() id: number) {
     return await this.userService.show(id);
   }
 
@@ -34,13 +30,13 @@ export class UserController {
   @Put(':id')
   async update(
     @Body() { email, name, password }: UserUpdateDTO,
-    @Param('id', ParseIntPipe) id: number,
+    @ParamId() id: number,
   ) {
     return await this.userService.update(id, { email, name, password });
   }
 
   @Delete(':id')
-  async destroy(@Param('id', ParseIntPipe) id: number) {
+  async destroy(@ParamId() id: number) {
     await this.userService.delete(id);
   }
 }

@@ -62,7 +62,7 @@ export class UserRepository {
     });
 
     if (!user) {
-      throw new NotFoundException(`Not found user for id ${id}`);
+      throw new NotFoundException(`Nenhum dado encontrado com id: ${id}`);
     }
 
     return user;
