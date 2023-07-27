@@ -14,7 +14,7 @@ import { UserIdCheckMiddleware } from 'src/middlewares/user-id-check.middleware'
   imports: [PrismaModule],
   controllers: [UserController],
   providers: [UserService, UserRepository],
-  exports: [],
+  exports: [UserService],
 })
 
 /**para usar um middleware use assim */
