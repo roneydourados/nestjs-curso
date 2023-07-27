@@ -7,7 +7,7 @@ import {
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './database/prisma/user.repository';
 import { UserIdCheckMiddleware } from 'src/middlewares/user-id-check.middleware';
 
 @Module({
