@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
@@ -8,6 +12,9 @@ import { Token } from 'src/auth/dtos/auth.token.dto';
 
 @Injectable()
 export class AuthRepository implements AuthRepositoryDTO {
+  private issuer = 'login';
+  private audience = 'users';
+
   constructor(
     private readonly db: PrismaService,
     private readonly jwtService: JwtService,
@@ -24,14 +31,23 @@ export class AuthRepository implements AuthRepositoryDTO {
       {
         expiresIn: '1 days',
         subject: user.id.toString(),
-        issuer: 'login',
-        audience: 'users',
+        issuer: this.audience,
+        audience: this.issuer,
       },
     );
   }
 
-  async checkToken(token: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async checkToken(token: string): Promise<object> {
+    try {
+      const tokenData = await this.jwtService.verify(token, {
+        audience: this.audience,
+        issuer: this.issuer,
+      });
+
+      return tokenData;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async login(email: string, password: string): Promise<Token> {
@@ -59,10 +75,6 @@ export class AuthRepository implements AuthRepositoryDTO {
         email,
       },
     });
-    console.log(
-      '🚀 ~ file: auth.repository.ts:62 ~ AuthRepository ~ forget ~ user:',
-      user,
-    );
 
     if (!user) {
       throw new UnauthorizedException('Email inválido');
