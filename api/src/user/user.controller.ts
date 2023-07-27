@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
-import { UserCreateDTO } from './dtos/user.create.dto';
-import { UserUpdateDTO } from './dtos/user.update.dto';
+import { UserDTO } from './dtos/user.create.dto';
+
 import { UserService } from './user.service';
 import { ParamId } from 'src/decorators/param-id.decorator';
 
@@ -23,13 +23,13 @@ export class UserController {
   }
 
   @Post()
-  async create(@Body() { email, name, password }: UserCreateDTO) {
+  async create(@Body() { email, name, password }: UserDTO) {
     return await this.userService.create({ email, name, password });
   }
 
   @Put(':id')
   async update(
-    @Body() { email, name, password }: UserUpdateDTO,
+    @Body() { email, name, password }: UserDTO,
     @ParamId() id: number,
   ) {
     return await this.userService.update(id, { email, name, password });

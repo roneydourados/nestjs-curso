@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserCreateDTO } from './dtos/user.create.dto';
+import { UserDTO } from './dtos/user.create.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class UserService {
     return await this.userRepository.show(id);
   }
 
-  async create({ email, name, password }: UserCreateDTO) {
+  async create({ email, name, password }: UserDTO) {
     return await this.userRepository.create({
       email,
       name,
@@ -22,7 +22,7 @@ export class UserService {
     });
   }
 
-  async update(id: number, { email, name, password }: UserCreateDTO) {
+  async update(id: number, { email, name, password }: UserDTO) {
     return await this.userRepository.update(id, {
       email,
       name,
