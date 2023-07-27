@@ -19,6 +19,7 @@ export class UserRepository implements UserRepositoryDTO {
     return await this.db.user.create({
       data,
       select: {
+        id: true,
         email: true,
         name: true,
         password: true,

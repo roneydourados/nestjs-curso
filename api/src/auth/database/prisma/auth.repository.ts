@@ -59,6 +59,10 @@ export class AuthRepository implements AuthRepositoryDTO {
         email,
       },
     });
+    console.log(
+      '🚀 ~ file: auth.repository.ts:62 ~ AuthRepository ~ forget ~ user:',
+      user,
+    );
 
     if (!user) {
       throw new UnauthorizedException('Email inválido');

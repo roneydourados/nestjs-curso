@@ -12,7 +12,7 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
 
   //peipe para validação de dados
-  app.useGlobalPipes(new ValidationPipe());
+  //app.useGlobalPipes(new ValidationPipe());
 
   // aqui vai interceptar todos os controllers que existir dentro da aplicação
   app.useGlobalInterceptors(new LogInterceptor());
