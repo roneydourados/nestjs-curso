@@ -6,6 +6,7 @@ export interface AuthRepositoryDTO {
   checkToken(token: string): Promise<object>;
   login(email: string, password: string): Promise<Token>;
   forget(email: string): Promise<void>;
-  reset(password: string, token: string): Promise<Token>;
+  reset(password: string): Promise<Token>;
   register(user: UserDTO): Promise<Token>;
+  me(token: string): Promise<object>;
 }

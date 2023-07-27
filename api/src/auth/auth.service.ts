@@ -15,11 +15,15 @@ export class AuthService {
     this.authRepository.forget(email);
   }
 
-  async reset(password: string, token: string): Promise<Token> {
-    return await this.authRepository.reset(password, token);
+  async reset(password: string): Promise<Token> {
+    return await this.authRepository.reset(password);
   }
 
   async register(user: UserDTO): Promise<Token> {
     return await this.authRepository.register(user);
+  }
+
+  async me(token: string): Promise<object> {
+    return await this.authRepository.me(token);
   }
 }

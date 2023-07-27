@@ -31,8 +31,8 @@ export class AuthRepository implements AuthRepositoryDTO {
       {
         expiresIn: '1 days',
         subject: user.id.toString(),
-        issuer: this.audience,
-        audience: this.issuer,
+        issuer: this.issuer,
+        audience: this.audience,
       },
     );
   }
@@ -43,6 +43,10 @@ export class AuthRepository implements AuthRepositoryDTO {
         audience: this.audience,
         issuer: this.issuer,
       });
+      console.log(
+        '🚀 ~ file: auth.repository.ts:46 ~ AuthRepository ~ checkToken ~ tokenData:',
+        tokenData,
+      );
 
       return tokenData;
     } catch (error) {
@@ -81,7 +85,7 @@ export class AuthRepository implements AuthRepositoryDTO {
     }
   }
 
-  async reset(password: string, token: string): Promise<Token> {
+  async reset(password: string): Promise<Token> {
     // se token for valido, então trocar a senha
     const id = 0;
 
@@ -109,5 +113,9 @@ export class AuthRepository implements AuthRepositoryDTO {
     return {
       accessToken: token,
     };
+  }
+
+  async me(token: string): Promise<object> {
+    return this.checkToken(token);
   }
 }
