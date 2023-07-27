@@ -26,4 +26,12 @@ export class AuthService {
   async me(token: string): Promise<object> {
     return await this.authRepository.me(token);
   }
+
+  isValidToken(token: string): boolean {
+    return this.authRepository.isValidToken(token);
+  }
+
+  checkToken(token: string): object {
+    return this.authRepository.checkToken(token);
+  }
 }

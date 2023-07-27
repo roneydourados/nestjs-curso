@@ -21,7 +21,7 @@ export class AuthRepository implements AuthRepositoryDTO {
     private readonly userService: UserService,
   ) {}
 
-  async createToken?(user: UserDTO): Promise<string> {
+  createToken?(user: UserDTO): string {
     return this.jwtService.sign(
       {
         id: user.id,
@@ -37,16 +37,12 @@ export class AuthRepository implements AuthRepositoryDTO {
     );
   }
 
-  async checkToken(token: string): Promise<object> {
+  checkToken(token: string): object {
     try {
-      const tokenData = await this.jwtService.verify(token, {
+      const tokenData = this.jwtService.verify(token, {
         audience: this.audience,
         issuer: this.issuer,
       });
-      console.log(
-        '🚀 ~ file: auth.repository.ts:46 ~ AuthRepository ~ checkToken ~ tokenData:',
-        tokenData,
-      );
 
       return tokenData;
     } catch (error) {
@@ -117,5 +113,15 @@ export class AuthRepository implements AuthRepositoryDTO {
 
   async me(token: string): Promise<object> {
     return this.checkToken(token);
+  }
+
+  isValidToken?(token: string): boolean {
+    try {
+      this.checkToken(token);
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
