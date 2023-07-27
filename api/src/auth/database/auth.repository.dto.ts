@@ -1,5 +1,5 @@
 import { UserDTO } from 'src/user/dtos/user.dto';
-import { Token } from '../../dtos/auth.token.dto';
+import { Token } from '../dtos/auth.token.dto';
 
 export interface AuthRepositoryDTO {
   createToken?(user: UserDTO): Promise<string>;
