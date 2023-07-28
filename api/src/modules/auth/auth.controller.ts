@@ -5,6 +5,7 @@ import { AuthRegisterDTO } from './dtos/register.dto';
 import { AuthForgetDTO } from './dtos/forget.dto';
 import { AuthResetDTO } from './dtos/reset.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -32,10 +33,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('me')
-  async me(@Req() req: any) {
-    return {
-      me: 'OK',
-      data: req.tokenPayload,
-    };
+  async me(@User('email') user: any) {
+    return { user };
   }
 }

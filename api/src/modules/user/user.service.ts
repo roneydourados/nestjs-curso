@@ -14,19 +14,16 @@ export class UserService {
     return await this.userRepository.show(id);
   }
 
-  async create({ email, name, password }: UserDTO) {
-    return await this.userRepository.create({
-      email,
-      name,
-      password,
-    });
+  async create(data: UserDTO) {
+    return await this.userRepository.create(data);
   }
 
-  async update(id: number, { email, name, password }: UserDTO) {
+  async update(id: number, { email, name, password, role }: UserDTO) {
     return await this.userRepository.update(id, {
       email,
       name,
       password,
+      role,
     });
   }
 

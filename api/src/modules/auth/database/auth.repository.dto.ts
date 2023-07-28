@@ -1,4 +1,4 @@
-import { UserDTO } from 'src/user/dtos/user.dto';
+import { UserDTO } from 'src/modules/user/dtos/user.dto';
 import { Token } from '../dtos/auth.token.dto';
 
 export interface AuthRepositoryDTO {

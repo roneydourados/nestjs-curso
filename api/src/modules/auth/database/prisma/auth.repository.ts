@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
 import { AuthRepositoryDTO } from '../auth.repository.dto';
-import { UserDTO } from 'src/user/dtos/user.dto';
-import { Token } from 'src/auth/dtos/auth.token.dto';
+import { UserService } from 'src/modules/user/user.service';
+import { UserDTO } from 'src/modules/user/dtos/user.dto';
+import { Token } from '../../dtos/auth.token.dto';
 
 @Injectable()
 export class AuthRepository implements AuthRepositoryDTO {
