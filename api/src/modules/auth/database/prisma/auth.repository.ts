@@ -9,6 +9,7 @@ import { AuthRepositoryDTO } from '../auth.repository.dto';
 import { UserService } from 'src/modules/user/user.service';
 import { UserDTO } from 'src/modules/user/dtos/user.dto';
 import { Token } from '../../dtos/auth.token.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthRepository implements AuthRepositoryDTO {
@@ -54,7 +55,6 @@ export class AuthRepository implements AuthRepositoryDTO {
     const user = await this.db.user.findFirst({
       where: {
         email,
-        password,
       },
     });
 
@@ -62,7 +62,13 @@ export class AuthRepository implements AuthRepositoryDTO {
       throw new UnauthorizedException('Email e/ou senha inválido');
     }
 
-    const token = await this.createToken(user);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Email e/ou senha inválido');
+    }
+
+    const token = this.createToken(user);
 
     return {
       accessToken: token,
