@@ -10,6 +10,7 @@ import { UserService } from 'src/modules/user/user.service';
 import { UserDTO } from 'src/modules/user/dtos/user.dto';
 import { Token } from '../../dtos/auth.token.dto';
 import * as bcrypt from 'bcrypt';
+import { MailerService } from '@nestjs-modules/mailer/dist';
 
 @Injectable()
 export class AuthRepository implements AuthRepositoryDTO {
@@ -20,6 +21,7 @@ export class AuthRepository implements AuthRepositoryDTO {
     private readonly db: PrismaService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly mailer: MailerService,
   ) {}
 
   createToken?(user: UserDTO): string {
@@ -85,6 +87,28 @@ export class AuthRepository implements AuthRepositoryDTO {
     if (!user) {
       throw new UnauthorizedException('Email inválido');
     }
+
+    const token = this.jwtService.sign(
+      {
+        id: user.id,
+      },
+      {
+        expiresIn: '30 minutes',
+        subject: user.id.toString(),
+        issuer: 'forget',
+        audience: 'users',
+      },
+    );
+
+    await this.mailer.sendMail({
+      subject: 'Recuperação de senha',
+      to: '',
+      template: 'forget',
+      context: {
+        name: user.name,
+        token,
+      },
+    });
   }
 
   async reset(password: string): Promise<Token> {
