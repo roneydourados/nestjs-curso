@@ -11,13 +11,227 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Int      @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  clinicaId     Int
+  clinica       Clinicas @relation(fields: [clinicaId], references: [id])
+  name          String
+  email         String   @unique
+  password      String
+  role          Int      @default(1)
+  agenda        Boolean  @default(false)
+  anamnese      Boolean  @default(false)
+  atestado      Boolean  @default(false)
+  dadosPaciente Boolean  @default(false)
+  exame         Boolean  @default(false)
+  felicitacao   Boolean  @default(false)
+  orcamento     Boolean  @default(false)
+  plano         Boolean  @default(false)
+  root          Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("users")
+}
+
+model Clinicas {
+  id             Int            @id @default(autoincrement())
+  fantasia       String         @db.VarChar(100)
+  razaoSocial    String         @db.VarChar(100)
+  responsavel    String         @db.VarChar(100)
+  responsavelCro String         @db.VarChar(10)
+  cep            String         @db.VarChar(8)
+  endereco       String         @db.VarChar(100)
+  cidade         String         @db.VarChar(100)
+  numero         String         @db.VarChar(10)
+  uf             String         @db.Char(2)
+  whatsapp       String         @db.VarChar(20)
+  telefone       String         @db.VarChar(20)
+  email          String
+  User           User[]
+  Anamnese       Anamnese[]
+  Exame          Exames[]
+  Servicos       Servicos[]
+  Planos         Planos[]
+  Pessoas        Pessoas[]
+  Estoque        Estoques[]
+  Categorias     Categorias[]
+  Caixas         Caixas[]
+  Compromissos   Compromissos[]
+  Financeiro     Financeiro[]
+
+  @@map("clinicas")
+}
+
+model Anamnese {
+  id        Int      @id @default(autoincrement())
+  clinicaId Int
+  clinica   Clinicas @relation(fields: [clinicaId], references: [id])
+  pAnP01    Boolean
+  pAnP02    String
+  pAnP02q   String
+  pAnP03    Boolean
+  pAnP03q   String
+  pAnP04    Boolean
+  pAnP04q   String
+  pAnP05    Boolean
+  pAnP05q   String
+  pAnP06    Boolean
+  pAnP07    Boolean
+  pAnP08    Boolean
+  pAnP09q   String
+  pAnP10    Boolean
+  pAnP10q   String
+  pAnP11    String
+  pAnP11q   String
+
+  @@map("anamneses")
+}
+
+model Exames {
+  id         Int      @id @default(autoincrement())
+  clinicaId  Int
+  clinica    Clinicas @relation(fields: [clinicaId], references: [id])
+  assoalho   String
+  exame      String
+  observacao String
+  labios     String
+  lingua     String
+  palato     String
+
+  @@map("exames")
+}
+
+model Servicos {
+  id        Int      @id @default(autoincrement())
+  clinicaId Int
+  clinica   Clinicas @relation(fields: [clinicaId], references: [id])
+  nome      String   @db.VarChar(100)
+  valor     Decimal  @db.Decimal(18, 2)
+
+  @@map("servicos")
+}
+
+model Estoques {
+  id         Int      @id @default(autoincrement())
+  clinicaId  Int
+  clinica    Clinicas @relation(fields: [clinicaId], references: [id])
+  nome       String   @db.VarChar(100)
+  valor      Decimal  @db.Decimal(18, 2)
+  quantidade Decimal  @db.Decimal(18, 3)
+
+  @@map("estoques")
+}
+
+model Categorias {
+  id         Int          @id @default(autoincrement())
+  clinicaId  Int
+  clinica    Clinicas     @relation(fields: [clinicaId], references: [id])
+  descricao  String       @db.VarChar(100)
+  Financeiro Financeiro[]
+
+  @@map("categorias")
+}
+
+model Caixas {
+  id         Int          @id @default(autoincrement())
+  clinicaId  Int
+  clinica    Clinicas     @relation(fields: [clinicaId], references: [id])
+  descricao  String       @db.VarChar(100)
+  Financeiro Financeiro[]
+
+  @@map("caixas")
+}
+
+model Financeiro {
+  id          Int        @id @default(autoincrement())
+  clinicaId   Int
+  clinica     Clinicas   @relation(fields: [clinicaId], references: [id])
+  caixaId     Int
+  caixa       Caixas     @relation(fields: [caixaId], references: [id])
+  pessoaId    Int
+  pessoa      Pessoas    @relation(fields: [pessoaId], references: [id])
+  categoriaId Int
+  categoria   Categorias @relation(fields: [categoriaId], references: [id])
+  emissao     DateTime   @default(now()) @db.Date()
+  vencimento  DateTime   @default(now()) @db.Date()
+  descricao   String     @db.VarChar(100)
+  valor       Decimal    @db.Decimal(18, 2)
+  quantidade  Decimal    @db.Decimal(18, 3)
+  tipo        String // Contas a pagar ou  Contas a receber
+
+  @@map("financeiros")
+}
+
+model Pessoas {
+  id             Int            @id @default(autoincrement())
+  clinicaId      Int
+  clinica        Clinicas       @relation(fields: [clinicaId], references: [id])
+  nome           String         @db.VarChar(100)
+  cpf            String         @db.VarChar(20)
+  rg             String         @db.VarChar(20)
+  cep            String         @db.VarChar(8)
+  endereco       String         @db.VarChar(150)
+  numero         String         @db.VarChar(10)
+  cidade         String         @db.VarChar(80)
+  uf             String         @db.Char(2)
+  bairro         String         @db.VarChar(100)
+  dataNascimento DateTime       @db.Date()
+  sexo           String         @db.Char(1)
+  whatsapp       String         @db.VarChar(18)
+  telefone       String         @db.VarChar(18)
+  observacao     String
+  tipo           String // Paciente, fornecedor, Cliente, etc..
+  Compromissos   Compromissos[]
+  Financeiro     Financeiro[]
+
+  @@map("pessoas")
+}
+
+model Compromissos {
+  id         Int      @id @default(autoincrement())
+  clinicaId  Int
+  clinica    Clinicas @relation(fields: [clinicaId], references: [id])
+  pessoaId   Int
+  pessoa     Pessoas  @relation(fields: [pessoaId], references: [id])
+  data       DateTime
+  descricao  String
+  observacao String
+
+  @@map("compromissos")
+}
+
+model Planos {
+  id           Int            @id @default(autoincrement())
+  clinicaId    Int
+  clinica      Clinicas       @relation(fields: [clinicaId], references: [id])
+  codPac       Int
+  data         DateTime
+  descricao    String
+  observacao   String
+  Radio        Radio[]
+  Odontogramas Odontogramas[]
+
+  @@map("planos")
+}
+
+model Radio {
+  id         Int      @id @default(autoincrement())
+  planoId    Int
+  plano      Planos   @relation(fields: [planoId], references: [id])
+  data       DateTime
+  descricao  String
+  observacao String
+
+  @@map("radios")
+}
+
+model Odontogramas {
+  id         Int      @id @default(autoincrement())
+  planoId    Int
+  plano      Planos   @relation(fields: [planoId], references: [id])
+  data       DateTime
+  descricao  String
+  observacao String
+
+  @@map("odontogramas")
 }
