@@ -100,41 +100,59 @@ export class AuthRepository implements AuthRepositoryDTO {
       },
     );
 
-    await this.mailer.sendMail({
-      subject: 'Recuperação de senha',
-      to: '',
-      template: 'forget',
-      context: {
-        name: user.name,
-        token,
-      },
-    });
+    try {
+      await this.mailer.sendMail({
+        subject: 'Recuperação de senha',
+        to: '',
+        template: 'forget',
+        context: {
+          name: user.name,
+          token,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  async reset(password: string): Promise<Token> {
-    // se token for valido, então trocar a senha
-    const id = 0;
+  async reset(password: string, token: string): Promise<Token> {
+    try {
+      const data: any = this.jwtService.verify(token, {
+        audience: 'users',
+        issuer: 'forget',
+      });
 
-    const user = await this.db.user.update({
-      where: {
-        id,
-      },
-      data: {
-        password,
-      },
-    });
+      if (isNaN(data.id)) {
+        throw new BadRequestException('Id de usuário inválido!');
+      }
 
-    const tokenUser = await this.createToken(user);
+      const salt = await bcrypt.genSalt();
 
-    return {
-      accessToken: tokenUser,
-    };
+      const hashPassword = await bcrypt.hash(password, salt);
+
+      const user = await this.db.user.update({
+        where: {
+          id: Number(data.id),
+        },
+        data: {
+          password: hashPassword,
+        },
+      });
+
+      const tokenUser = this.createToken(user);
+
+      return {
+        accessToken: tokenUser,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async register(user: UserDTO): Promise<Token> {
     const userRegister = await this.userService.create(user);
 
-    const token = await this.createToken(userRegister);
+    const token = this.createToken(userRegister);
 
     return {
       accessToken: token,
