@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UserRepositoryDTO } from '../user.repository.dto';
-import { UserDTO } from '../../dtos/user.dto';
-import * as bcrypt from 'bcrypt';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+import { UserRepositoryDTO } from "../user.repository.dto";
+import { UserDTO } from "../../dtos/user.dto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserRepository implements UserRepositoryDTO {
@@ -20,11 +20,22 @@ export class UserRepository implements UserRepositoryDTO {
     const salt = await bcrypt.genSalt();
 
     const hashPassword = await bcrypt.hash(data.password, salt);
+    // Omit `id` from DTO to satisfy Prisma's create input type
+    const { id, ...createData } = data;
 
-    data.password = hashPassword;
+    const dataToCreate = {
+      ...createData,
+      password: hashPassword,
+      // connect to a clinic; use env CLINICA_ID or fallback to 1
+      clinica: {
+        connect: {
+          id: Number(process.env.CLINICA_ID) || 1,
+        },
+      },
+    };
 
     return await this.db.user.create({
-      data,
+      data: dataToCreate,
       select: {
         id: true,
         email: true,
@@ -40,11 +51,16 @@ export class UserRepository implements UserRepositoryDTO {
     const salt = await bcrypt.genSalt();
 
     const hashPassword = await bcrypt.hash(data.password, salt);
+    // Omit `id` from DTO to satisfy Prisma's update input type
+    const { id: _id, ...updateData } = data;
 
-    data.password = hashPassword;
+    const dataToUpdate = {
+      ...updateData,
+      password: hashPassword,
+    };
 
     return await this.db.user.update({
-      data,
+      data: dataToUpdate,
       where: {
         id,
       },
